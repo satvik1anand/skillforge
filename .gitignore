@@ -1,0 +1,25 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Environment variables (never commit secrets)
+.env*
+!.env.example
+!.env.*.example
+
+# Logs and local tooling
+*.log
+.idea/
+.tmp/
+.agents/
+.vercel/
+.railway/
+.supabase/
+
+# Misc
+.DS_Store
+Thumbs.db

@@ -1,0 +1,307 @@
+.panel {
+  overflow: hidden;
+  position: relative;
+  max-width: 960px;
+  margin: 46px auto 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 100% 0, rgba(163, 230, 53, 0.1), transparent 37%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.042), transparent 47%),
+    var(--surface);
+  box-shadow: 0 28px 65px rgba(0, 0, 0, 0.17);
+  padding: clamp(20px, 3vw, 31px);
+  animation: formReveal 440ms ease both;
+}
+
+.panel::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(163, 230, 53, 0.76), transparent);
+  content: "";
+}
+
+.panelWithinBuildList {
+  max-width: none;
+  margin: 0 0 26px;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 23px;
+}
+
+.heading .eyebrow {
+  margin-bottom: 10px;
+}
+
+.heading h2 {
+  margin: 0;
+  font-size: clamp(1.28rem, 2.1vw, 1.58rem);
+  font-weight: 640;
+  letter-spacing: -0.035em;
+}
+
+.heading > p {
+  max-width: 390px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.79rem;
+  line-height: 1.55;
+}
+
+.form {
+  display: grid;
+  gap: 23px;
+  margin-top: 25px;
+}
+
+.requiredFields,
+.metricFields {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.requiredFields > legend,
+.metricFields > legend {
+  padding: 0;
+  color: var(--faint);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fieldGrid,
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricGrid {
+  grid-template-columns: 1.45fr 0.8fr repeat(2, minmax(0, 0.72fr));
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #e4e4e7;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+  line-height: 1.45;
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.field input,
+.field select {
+  min-height: 39px;
+  padding: 8px 10px;
+}
+
+.field textarea {
+  resize: vertical;
+  padding: 10px;
+}
+
+.field select {
+  appearance: auto;
+  color-scheme: dark;
+}
+
+.field select option {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #686870;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: rgba(163, 230, 53, 0.58);
+  background: rgba(163, 230, 53, 0.045);
+  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.08);
+}
+
+.field small {
+  color: var(--faint);
+  font-size: 0.67rem;
+  font-weight: 400;
+}
+
+.optionalFields {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 17px 0;
+}
+
+.optionalFields summary {
+  cursor: pointer;
+  color: #d4d4d8;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.optionalFields[open] summary {
+  color: #e9f8ce;
+}
+
+.optionalFields summary::marker {
+  color: var(--accent);
+}
+
+.optionalContent {
+  display: grid;
+  gap: 17px;
+  padding-top: 21px;
+}
+
+.dateField {
+  max-width: 280px;
+}
+
+.evidenceToggle {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(163, 230, 53, 0.22);
+  border-radius: 10px;
+  padding: 13px;
+  background: var(--accent-wash);
+}
+
+.evidenceToggle input {
+  width: 15px;
+  height: 15px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.evidenceToggle strong,
+.evidenceToggle small {
+  display: block;
+}
+
+.evidenceToggle strong {
+  color: #edf7dc;
+  font-size: 0.78rem;
+  font-weight: 620;
+}
+
+.evidenceToggle small {
+  margin-top: 4px;
+  color: #c2d5a1;
+  font-size: 0.7rem;
+  line-height: 1.48;
+}
+
+.error {
+  margin: -4px 0 0;
+  border-radius: 7px;
+  padding: 11px 12px;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.error {
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  background: rgba(248, 113, 113, 0.08);
+  color: #fecaca;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+}
+
+.actions button {
+  border: 0;
+  cursor: pointer;
+}
+
+.actions button:disabled {
+  cursor: wait;
+  opacity: 0.66;
+  transform: none;
+}
+
+@keyframes formReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.actions p {
+  margin: 0;
+  color: var(--faint);
+  font-size: 0.69rem;
+}
+
+@media (max-width: 760px) {
+  .heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+  }
+
+  .fieldGrid,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dateField {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    transition: none;
+  }
+}
