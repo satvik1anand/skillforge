@@ -52,10 +52,16 @@ const optionalJwksUrl = z.preprocess(
     .optional(),
 );
 
+const optionalOriginList = z.preprocess(
+  emptyStringToUndefined,
+  z.string().trim().max(2_000).optional(),
+);
+
 const environmentSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(4000),
   FRONTEND_URL: optionalOrigin,
+  FRONTEND_ADDITIONAL_ORIGINS: optionalOriginList,
   SUPABASE_URL: optionalOrigin,
   SUPABASE_SECRET_KEY: optionalSecret,
   SUPABASE_SERVICE_ROLE_KEY: optionalSecret,
@@ -69,6 +75,8 @@ export type ServerConfig = {
   nodeEnv: "development" | "test" | "production";
   port: number;
   frontendUrl?: string;
+  /** Exact additional browser origins permitted to call the API. */
+  frontendAdditionalOrigins?: string[];
   supabaseUrl?: string;
   supabaseIssuer?: string;
   /**
@@ -118,6 +126,27 @@ export function loadServerConfig(source: NodeJS.ProcessEnv = process.env): Serve
 
   const env = result.data;
   const coherenceIssues: string[] = [];
+  const frontendAdditionalOrigins = Array.from(
+    new Set(
+      (env.FRONTEND_ADDITIONAL_ORIGINS ?? "")
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean),
+    ),
+  )
+    .map((value) => {
+      const parsedOrigin = optionalOrigin.safeParse(value);
+
+      if (!parsedOrigin.success || !parsedOrigin.data) {
+        coherenceIssues.push(
+          "FRONTEND_ADDITIONAL_ORIGINS must contain only comma-separated origins without paths, query strings, or fragments.",
+        );
+        return undefined;
+      }
+
+      return parsedOrigin.data;
+    })
+    .filter((value): value is string => Boolean(value) && value !== env.FRONTEND_URL);
 
   if (env.SUPABASE_JWKS_URL && !env.SUPABASE_URL) {
     coherenceIssues.push("SUPABASE_JWKS_URL requires SUPABASE_URL to establish the token issuer.");
@@ -144,7 +173,12 @@ export function loadServerConfig(source: NodeJS.ProcessEnv = process.env): Serve
 
   if (
     env.NODE_ENV === "production" &&
-    [env.FRONTEND_URL, env.SUPABASE_URL, env.SUPABASE_JWKS_URL].some(
+    [
+      env.FRONTEND_URL,
+      ...frontendAdditionalOrigins,
+      env.SUPABASE_URL,
+      env.SUPABASE_JWKS_URL,
+    ].some(
       (value) => value?.startsWith("http://"),
     )
   ) {
@@ -169,6 +203,7 @@ export function loadServerConfig(source: NodeJS.ProcessEnv = process.env): Serve
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
     frontendUrl: env.FRONTEND_URL,
+    frontendAdditionalOrigins,
     supabaseUrl: env.SUPABASE_URL,
     supabaseIssuer,
     supabaseSecretKey,
@@ -188,7 +223,10 @@ export function getConfigurationReadiness(
 ): ConfigurationReadiness {
   return {
     api: "ready",
-    frontend: config.frontendUrl ? "configured" : "not_configured",
+    frontend:
+      config.frontendUrl || config.frontendAdditionalOrigins?.length
+        ? "configured"
+        : "not_configured",
     supabase:
       config.supabaseUrl && config.supabaseSecretKey
         ? "configured"

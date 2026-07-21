@@ -42,8 +42,13 @@ export type AppDependencies = {
 };
 
 function isAllowedOrigin(origin: string, config: ServerConfig): boolean {
-  if (config.frontendUrl) {
-    return origin === config.frontendUrl;
+  const configuredOrigins = [
+    config.frontendUrl,
+    ...(config.frontendAdditionalOrigins ?? []),
+  ].filter((value): value is string => Boolean(value));
+
+  if (configuredOrigins.length > 0) {
+    return configuredOrigins.includes(origin);
   }
 
   // Fail closed for browser clients when a production deployment has not set

@@ -42,8 +42,9 @@ function configuredVerifier(
 async function withApi<T>(
   verifier: AccessTokenVerifier,
   callback: (baseUrl: string) => Promise<T>,
+  config: ServerConfig = testConfig,
 ): Promise<T> {
-  const server = createApp(testConfig, { accessTokenVerifier: verifier }).listen(
+  const server = createApp(config, { accessTokenVerifier: verifier }).listen(
     0,
     "127.0.0.1",
   );
@@ -184,6 +185,25 @@ test("server configuration derives the JWKS endpoint and uses one server-only Su
     EnvironmentValidationError,
   );
 
+  const multipleFrontendOrigins = loadServerConfig({
+    NODE_ENV: "production",
+    FRONTEND_URL: "https://app.skillforge.example",
+    FRONTEND_ADDITIONAL_ORIGINS:
+      "https://portfolio.skillforge.example, https://demo.skillforge.example",
+  });
+  assert.deepEqual(multipleFrontendOrigins.frontendAdditionalOrigins, [
+    "https://portfolio.skillforge.example",
+    "https://demo.skillforge.example",
+  ]);
+
+  assert.throws(
+    () =>
+      loadServerConfig({
+        FRONTEND_ADDITIONAL_ORIGINS: "https://app.skillforge.example/not-an-origin",
+      }),
+    EnvironmentValidationError,
+  );
+
   assert.throws(
     () =>
       loadServerConfig({
@@ -214,4 +234,37 @@ test("server configuration derives the JWKS endpoint and uses one server-only Su
   });
   assert.equal(customOpenRouter.openRouterModel, "provider/custom-model");
   assert.equal(getConfigurationReadiness(loadServerConfig({})).ai, "not_configured");
+});
+
+test("CORS permits only the configured exact frontend origins", async () => {
+  const config: ServerConfig = {
+    ...testConfig,
+    nodeEnv: "production",
+    frontendUrl: "https://app.skillforge.example",
+    frontendAdditionalOrigins: ["https://portfolio.skillforge.example"],
+  };
+
+  const allowed = await withApi(
+    configuredVerifier(),
+    (baseUrl) =>
+      fetch(`${baseUrl}/api/v1/does-not-exist`, {
+        headers: { Origin: "https://portfolio.skillforge.example" },
+      }),
+    config,
+  );
+  assert.equal(allowed.status, 404);
+  assert.equal(
+    allowed.headers.get("access-control-allow-origin"),
+    "https://portfolio.skillforge.example",
+  );
+
+  const denied = await withApi(
+    configuredVerifier(),
+    (baseUrl) =>
+      fetch(`${baseUrl}/api/v1/does-not-exist`, {
+        headers: { Origin: "https://unconfigured.skillforge.example" },
+      }),
+    config,
+  );
+  assert.equal(denied.status, 403);
 });

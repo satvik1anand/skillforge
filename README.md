@@ -62,7 +62,7 @@ Use the committed templates as the source of truth. Do not commit either local e
 | File | Variables | Notes |
 | --- | --- | --- |
 | `client/.env.local` | `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Browser-visible configuration for Supabase Auth and the API only. `NEXT_PUBLIC_SUPABASE_ANON_KEY` is a legacy compatibility alternative. |
-| `server/.env` | `NODE_ENV`, `PORT`, `FRONTEND_URL`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Required for the complete local persistence/auth path. Do not set `SUPABASE_SECRET_KEY` and legacy `SUPABASE_SERVICE_ROLE_KEY` together. |
+| `server/.env` | `NODE_ENV`, `PORT`, `FRONTEND_URL`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Required for the complete local persistence/auth path. `FRONTEND_ADDITIONAL_ORIGINS` can add specific, exact extra app origins; do not use a broad deployment-host wildcard. Do not set `SUPABASE_SECRET_KEY` and legacy `SUPABASE_SERVICE_ROLE_KEY` together. |
 | `server/.env` (optional) | `SUPABASE_JWKS_URL` | Usually leave unset; the server derives it from `SUPABASE_URL`. |
 | `server/.env` (optional) | `OPENAI_API_KEY` | Preferred server-only model provider. Never place it in a `NEXT_PUBLIC_*` variable or the client environment file. |
 | `server/.env` (optional) | `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` | Server-only open-weight fallback after OpenAI. `OPENROUTER_MODEL` is optional and selects the fallback model when supplied. |
