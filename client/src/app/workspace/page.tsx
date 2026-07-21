@@ -72,7 +72,7 @@ function formatContextPack(value: BuildBrief["primaryContextPack"]): string {
 function stateTitle(state: WorkspaceState): string {
   switch (state.kind) {
     case "configuration":
-      return "Workspace setup is incomplete";
+      return "Your workspace is not available";
     case "unauthenticated":
       return "Sign in to see your workspace";
     case "unavailable":
@@ -119,7 +119,7 @@ export default function WorkspacePage() {
     if (!isSupabaseAuthConfigured()) {
       showProblem(
         "configuration",
-        "Add the public Supabase URL and key in client/.env.local before the workspace can check your session.",
+        "Your workspace is temporarily unavailable. Please try again shortly.",
       );
       return;
     }
@@ -127,7 +127,7 @@ export default function WorkspacePage() {
     if (!process.env.NEXT_PUBLIC_API_URL?.trim()) {
       showProblem(
         "configuration",
-        "Add NEXT_PUBLIC_API_URL in client/.env.local before the workspace can load your projects.",
+        "Your workspace is temporarily unavailable. Please try again shortly.",
       );
       return;
     }
@@ -149,7 +149,7 @@ export default function WorkspacePage() {
           "unauthenticated",
           sessionError
             ? "Your session could not be read. Sign in again to continue."
-            : "No active session was found in this browser.",
+            : "Sign in to view your projects.",
         );
         return;
       }
@@ -161,7 +161,7 @@ export default function WorkspacePage() {
       if (response.status === 401 || response.status === 403) {
         showProblem(
           "unauthenticated",
-          "Your current session was not accepted by the API. Sign in again to continue.",
+          "Sign in again to continue.",
         );
         return;
       }
@@ -169,7 +169,7 @@ export default function WorkspacePage() {
       if (!response.ok) {
         showProblem(
           "unavailable",
-          `The API returned ${response.status} while loading your projects. No workspace data is shown.`,
+          "We could not load your projects right now. Please try again.",
         );
         return;
       }
@@ -180,7 +180,7 @@ export default function WorkspacePage() {
       } catch {
         showProblem(
           "unavailable",
-          "The API response could not be read as project data. No workspace data is shown.",
+          "We could not load your projects right now. Please try again.",
         );
         return;
       }
@@ -190,7 +190,7 @@ export default function WorkspacePage() {
       if (!builds) {
         showProblem(
           "unavailable",
-          "The API returned an unexpected project-list response. No workspace data is shown.",
+          "We could not load your projects right now. Please try again.",
         );
         return;
       }
@@ -199,13 +199,13 @@ export default function WorkspacePage() {
       setRefreshMessage(null);
     } catch (error) {
       if (error instanceof ApiConfigurationError) {
-        showProblem("unauthenticated", error.message);
+        showProblem("unauthenticated", "Sign in to view your projects.");
         return;
       }
 
       showProblem(
         "unavailable",
-        "The API could not be reached. Check that the backend is running and that its URL allows this client origin.",
+        "We could not load your projects right now. Please try again.",
       );
     }
   }, []);
@@ -299,7 +299,7 @@ export default function WorkspacePage() {
           <span className={styles.loadingMark} aria-hidden="true" />
           <div>
             <h2>Checking your workspace</h2>
-            <p>Loading the projects attached to your authenticated session.</p>
+            <p>Loading your projects.</p>
           </div>
         </section>
       ) : null}
@@ -320,12 +320,7 @@ export default function WorkspacePage() {
                   Sign in
                 </Link>
               ) : null}
-              {state.kind === "configuration" ? (
-                <Link className="button button-quiet" href="/login">
-                  View account setup
-                </Link>
-              ) : null}
-              {state.kind === "unavailable" ? (
+              {state.kind === "configuration" || state.kind === "unavailable" ? (
                 <button className="button button-quiet" onClick={() => void loadBuilds()} type="button">
                   Try again
                 </button>

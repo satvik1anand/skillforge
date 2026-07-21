@@ -19,7 +19,6 @@ type ResendState =
 
 export function ConfirmationPending() {
   const [email, setEmail] = useState<string | null>(null);
-  const [origin, setOrigin] = useState<string | null>(null);
   const [resendState, setResendState] = useState<ResendState>({ kind: "idle" });
 
   useEffect(() => {
@@ -28,7 +27,6 @@ export function ConfirmationPending() {
     } catch {
       setEmail(null);
     }
-    setOrigin(window.location.origin);
   }, []);
 
   async function resendConfirmation() {
@@ -93,21 +91,13 @@ export function ConfirmationPending() {
         </p>
 
         <ol className={styles.steps}>
-          <li>Find the message from SkillForge or Supabase, including spam or junk.</li>
-          <li>Open its confirmation link in this same browser and local address.</li>
+          <li>Find the confirmation email, including your spam or junk folder.</li>
+          <li>Open its confirmation link in this same browser.</li>
           <li>SkillForge will complete sign-in and open your workspace.</li>
         </ol>
 
         <p className={styles.hint}>
-          {origin ? (
-            <>
-              This sign-up uses a browser-bound security check. Keep using <code>{origin}</code>{" "}
-              for the confirmation step; switching between <code>localhost</code> and{" "}
-              <code>127.0.0.1</code> counts as a different address.
-            </>
-          ) : (
-            "This sign-up uses a browser-bound security check, so finish confirmation in the same browser and local address you used to sign up."
-          )}
+          For security, finish confirmation in the browser you used to create your account.
         </p>
 
         {resendState.kind === "sent" ? (

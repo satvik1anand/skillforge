@@ -73,23 +73,16 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function getApiErrorMessage(status: number, payload: unknown): string {
-  if (isRecord(payload) && isRecord(payload.error) && typeof payload.error.message === "string") {
-    const message = payload.error.message.trim();
-    if (message.length > 0 && message.length <= 300) {
-      return message;
-    }
-  }
-
+function getApiErrorMessage(status: number): string {
   if (status === 401 || status === 403) {
-    return "Your session was not accepted by the API. Sign in again, then try creating this project.";
+    return "Sign in again before creating this project.";
   }
 
   if (status === 503) {
     return "Project storage is currently unavailable. Nothing was created. Try again once the service is available.";
   }
 
-  return "The API could not create this project. Nothing has been added to your workspace.";
+  return "We could not create this project. Your projects have not changed.";
 }
 
 async function readJson(response: Response): Promise<unknown> {
@@ -231,7 +224,7 @@ export function BuildBriefForm({
       const responsePayload = await readJson(response);
 
       if (response.status !== 201) {
-        setErrorMessage(getApiErrorMessage(response.status, responsePayload));
+        setErrorMessage(getApiErrorMessage(response.status));
         return;
       }
 
@@ -242,7 +235,7 @@ export function BuildBriefForm({
 
       if (!isBuildBrief(created)) {
         setErrorMessage(
-          "The server did not return a usable project confirmation. The workspace was not updated; refresh it before trying again.",
+          "We could not confirm that project creation. Refresh your workspace before trying again.",
         );
         return;
       }
@@ -251,10 +244,10 @@ export function BuildBriefForm({
       setValues(initialValues);
     } catch (error) {
       if (error instanceof ApiConfigurationError) {
-        setErrorMessage(error.message);
+        setErrorMessage("Sign in again before creating this project.");
       } else {
         setErrorMessage(
-          "The API could not be reached. Nothing was confirmed as created. Check the backend connection and try again.",
+          "We could not create this project right now. Please try again.",
         );
       }
     } finally {

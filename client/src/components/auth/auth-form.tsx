@@ -35,7 +35,7 @@ function getFriendlyAuthError(message: string): string {
     return "An account already exists for this email. Try signing in instead.";
   }
 
-  return message;
+  return "We could not complete that request. Please try again.";
 }
 
 const oauthProviderLabels: Record<SupportedOAuthProvider, string> = {
@@ -62,9 +62,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     setNeedsEmailConfirmation(false);
 
     if (!authConfigured) {
-      setErrorMessage(
-        "Supabase Auth is not configured yet. Add the public Supabase URL and key to client/.env.local.",
-      );
+      setErrorMessage("Account access is temporarily unavailable. Please try again shortly.");
       return;
     }
 
@@ -126,11 +124,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       router.replace("/workspace");
       router.refresh();
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Authentication could not be completed. Please try again.";
-      setErrorMessage(message);
+      setErrorMessage("We could not complete that request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -146,9 +140,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     setNeedsEmailConfirmation(false);
 
     if (!authConfigured) {
-      setErrorMessage(
-        "Supabase Auth is not configured yet. Add the public Supabase URL and key to client/.env.local.",
-      );
+      setErrorMessage("Account access is temporarily unavailable. Please try again shortly.");
       return;
     }
 
@@ -219,16 +211,11 @@ export function AuthForm({ mode }: AuthFormProps) {
         <div className={styles.card}>
           <div className={styles.cardHeading}>
             <p>{isSignUp ? "Create account" : "Sign in"}</p>
-            <span className={authConfigured ? styles.configured : styles.needsSetup}>
-              {authConfigured ? "Auth configured" : "Setup required"}
-            </span>
           </div>
 
           {!authConfigured ? (
-            <p className={styles.configurationNotice} role="status">
-              Add <code>NEXT_PUBLIC_SUPABASE_URL</code> and a public Supabase
-              key in <code>client/.env.local</code> before account actions can
-              be used.
+            <p className={styles.unavailableNotice} role="status">
+              Account access is temporarily unavailable. Please try again shortly.
             </p>
           ) : null}
 
@@ -284,15 +271,6 @@ export function AuthForm({ mode }: AuthFormProps) {
                 value={password}
               />
             </label>
-
-            {isSignUp ? (
-              <p className={styles.disclosure}>
-                Depending on this Supabase project&apos;s email-confirmation
-                setting, account creation may send a confirmation email rather
-                than start a session immediately.
-              </p>
-            ) : null}
-
             {errorMessage ? (
               <p className={styles.error} role="alert">
                 {errorMessage}

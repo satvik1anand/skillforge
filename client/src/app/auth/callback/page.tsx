@@ -20,7 +20,7 @@ function getCallbackProblemMessage(error: unknown): string {
   const message = error instanceof Error ? error.message.toLowerCase() : "";
 
   if (message.includes("code verifier") || message.includes("pkce")) {
-    return "This confirmation link must be opened in the same browser and local address used to create the account. Request a new link if that browser is no longer available.";
+    return "Open the confirmation link in the browser you used to create your account. Request a new link if needed.";
   }
 
   if (message.includes("expired") || message.includes("otp_expired")) {
@@ -49,8 +49,7 @@ export default function AuthCallbackPage() {
       if (!isSupabaseAuthConfigured()) {
         setState({
           kind: "problem",
-          message:
-            "Supabase Auth is not configured in this environment, so sign-in could not be completed.",
+          message: "Sign-in is temporarily unavailable. Please try again later.",
         });
         return;
       }
@@ -140,7 +139,7 @@ export default function AuthCallbackPage() {
           setState({
             kind: "problem",
             message:
-              "No usable confirmation result was returned. Open the email link in the same browser and local address used to create your account, or request a new confirmation email.",
+              "We could not verify that link. Open the newest confirmation email in the browser you used to create your account, or request a new one.",
           });
           return;
         }
@@ -181,7 +180,7 @@ export default function AuthCallbackPage() {
           <>
             <p className="eyebrow">Secure sign-in</p>
             <h1>Completing your sign-in</h1>
-            <p>Checking your workspace session.</p>
+            <p>Getting your workspace ready.</p>
           </>
         ) : (
           <>

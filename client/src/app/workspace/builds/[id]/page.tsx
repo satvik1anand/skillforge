@@ -130,7 +130,7 @@ export default function BuildWorkspacePage() {
     if (!isSupabaseAuthConfigured() || !process.env.NEXT_PUBLIC_API_URL?.trim()) {
       setState({
         kind: "configuration",
-        message: "Workspace authentication or the API URL is not configured in this browser session.",
+        message: "This project is temporarily unavailable. Please try again shortly.",
       });
       return;
     }
@@ -147,7 +147,7 @@ export default function BuildWorkspacePage() {
       if (buildResponse.status === 401 || buildResponse.status === 403 || evidenceResponse.status === 401 || evidenceResponse.status === 403 || skillOverviewResponse.status === 401 || skillOverviewResponse.status === 403) {
         setState({
           kind: "unauthenticated",
-          message: "Your current session was not accepted. Sign in again to open this project.",
+          message: "Sign in again to open this project.",
         });
         return;
       }
@@ -173,7 +173,7 @@ export default function BuildWorkspacePage() {
       if (!build || !evidence) {
         setState({
           kind: "unavailable",
-          message: "The API returned an unexpected workspace response. Refresh before making changes.",
+          message: "We could not load this project right now. Please try again.",
         });
         return;
       }
@@ -186,8 +186,8 @@ export default function BuildWorkspacePage() {
       setState({
         kind: error instanceof ApiConfigurationError ? "unauthenticated" : "unavailable",
         message: error instanceof ApiConfigurationError
-          ? error.message
-          : "The API could not be reached. Check that the backend is running, then try again.",
+          ? "Sign in to open this project."
+          : "We could not load this project right now. Please try again.",
       });
     }
   }, [buildId]);
@@ -271,7 +271,7 @@ export default function BuildWorkspacePage() {
 
       const evidenceCard = readEvidenceCardResponse(await response.json());
       if (!evidenceCard) {
-        setFormMessage("The server did not return a usable evidence record. Refresh before trying again.");
+        setFormMessage("We could not confirm that evidence was saved. Refresh before trying again.");
         return;
       }
 
@@ -289,8 +289,8 @@ export default function BuildWorkspacePage() {
     } catch (error) {
       setFormMessage(
         error instanceof ApiConfigurationError
-          ? error.message
-          : "The API could not be reached. Your evidence was not assumed to be saved.",
+          ? "Sign in again before saving evidence."
+          : "We could not save your evidence right now. Please try again.",
       );
     } finally {
       setIsSavingEvidence(false);
@@ -331,7 +331,7 @@ export default function BuildWorkspacePage() {
 
       const updated = readEvidenceCardResponse(await response.json());
       if (!updated) {
-        setFormMessage("The server did not return the updated evidence record. Refresh before making another change.");
+        setFormMessage("We could not confirm that evidence was updated. Refresh before making another change.");
         return;
       }
 
@@ -344,8 +344,8 @@ export default function BuildWorkspacePage() {
     } catch (error) {
       setFormMessage(
         error instanceof ApiConfigurationError
-          ? error.message
-          : "The API could not be reached. Your evidence action was not assumed to complete.",
+          ? "Sign in again before updating evidence."
+          : "We could not update that evidence right now. Please try again.",
       );
     } finally {
       setBusyEvidenceId(null);
@@ -365,7 +365,7 @@ export default function BuildWorkspacePage() {
       {state.kind === "loading" ? (
         <section className={styles.statusPanel} aria-live="polite">
           <span className={styles.loadingMark} aria-hidden="true" />
-          <div><h1>Opening your project</h1><p>Loading the record linked to your session.</p></div>
+          <div><h1>Opening your project</h1><p>Loading your project details.</p></div>
         </section>
       ) : null}
 

@@ -15,7 +15,7 @@ export async function apiFetch(
 ): Promise<Response> {
   if (!isSupabaseAuthConfigured()) {
     throw new ApiConfigurationError(
-      "Supabase Auth is not configured, so an authenticated API request cannot be made.",
+      "Account access is temporarily unavailable. Please try again shortly.",
     );
   }
 
@@ -24,9 +24,7 @@ export async function apiFetch(
   } = await createSupabaseBrowserClient().auth.getSession();
 
   if (!session?.access_token) {
-    throw new ApiConfigurationError(
-      "Sign in before making an authenticated API request.",
-    );
+    throw new ApiConfigurationError("Sign in to continue.");
   }
 
   const headers = new Headers(init.headers);

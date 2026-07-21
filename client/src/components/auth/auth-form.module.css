@@ -72,24 +72,7 @@
   font-weight: 650;
 }
 
-.configured,
-.needsSetup {
-  border: 1px solid rgba(163, 230, 53, 0.2);
-  border-radius: 999px;
-  padding: 5px 8px;
-  background: rgba(163, 230, 53, 0.07);
-  color: #c9ed88;
-  font-size: 0.66rem;
-}
-
-.needsSetup {
-  border-color: rgba(251, 191, 36, 0.2);
-  background: rgba(251, 191, 36, 0.07);
-  color: #fcd58d;
-}
-
-.configurationNotice,
-.disclosure,
+.unavailableNotice,
 .notice,
 .error {
   margin: 0;
@@ -99,20 +82,14 @@
   line-height: 1.55;
 }
 
-.configurationNotice,
-.disclosure {
+.unavailableNotice {
   border: 1px solid rgba(251, 191, 36, 0.13);
   background: rgba(251, 191, 36, 0.055);
   color: #e7c889;
 }
 
-.configurationNotice {
+.unavailableNotice {
   margin-bottom: 18px;
-}
-
-.configurationNotice code {
-  color: #f4e0b2;
-  font-size: 0.72rem;
 }
 
 .oauthActions {

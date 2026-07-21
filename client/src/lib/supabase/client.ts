@@ -60,7 +60,7 @@ export function createSupabaseBrowserClient(): SupabaseClient {
 
   if (!config) {
     throw new Error(
-      "Supabase Auth is not configured. Add the public URL and publishable key to client/.env.local.",
+      "Account access is temporarily unavailable. Please try again shortly.",
     );
   }
 

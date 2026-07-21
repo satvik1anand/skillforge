@@ -217,7 +217,7 @@ export default function PortfolioPage() {
     if (!isSupabaseAuthConfigured()) {
       setState({
         kind: "configuration",
-        message: "Add the public Supabase URL and key in client/.env.local before the portfolio can check your session.",
+        message: "Your portfolio is temporarily unavailable. Please try again shortly.",
       });
       return;
     }
@@ -225,7 +225,7 @@ export default function PortfolioPage() {
     if (!process.env.NEXT_PUBLIC_API_URL?.trim()) {
       setState({
         kind: "configuration",
-        message: "Add NEXT_PUBLIC_API_URL in client/.env.local before the portfolio can load your project data.",
+        message: "Your portfolio is temporarily unavailable. Please try again shortly.",
       });
       return;
     }
@@ -243,7 +243,7 @@ export default function PortfolioPage() {
           kind: "unauthenticated",
           message: sessionError
             ? "Your session could not be read. Sign in again to continue."
-            : "No active session was found in this browser.",
+            : "Sign in to view your portfolio.",
         });
         return;
       }
@@ -252,7 +252,7 @@ export default function PortfolioPage() {
       if (buildsResponse.status === 401 || buildsResponse.status === 403) {
         setState({
           kind: "unauthenticated",
-          message: "Your current session was not accepted by the API. Sign in again to continue.",
+          message: "Sign in again to continue.",
         });
         return;
       }
@@ -260,7 +260,7 @@ export default function PortfolioPage() {
       if (!buildsResponse.ok) {
         setState({
           kind: "unavailable",
-          message: `The API returned ${buildsResponse.status} while loading your projects. Your portfolio was not assembled.`,
+          message: "We could not load your portfolio right now. Please try again.",
         });
         return;
       }
@@ -269,7 +269,7 @@ export default function PortfolioPage() {
       if (!builds) {
         setState({
           kind: "unavailable",
-          message: "The API returned an unexpected project-list response. Your portfolio was not assembled.",
+          message: "We could not load your portfolio right now. Please try again.",
         });
         return;
       }
@@ -309,8 +309,8 @@ export default function PortfolioPage() {
       setState({
         kind: error instanceof ApiConfigurationError ? "unauthenticated" : "unavailable",
         message: error instanceof ApiConfigurationError
-          ? error.message
-          : "The portfolio could not be reached. Check that the backend is running, then try again.",
+          ? "Sign in to view your portfolio."
+          : "We could not load your portfolio right now. Please try again.",
       });
     }
   }, []);

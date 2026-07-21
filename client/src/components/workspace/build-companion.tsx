@@ -218,19 +218,6 @@ function readSendResult(payload: unknown): SendResult | undefined {
   };
 }
 
-async function readErrorMessage(response: Response, fallback: string): Promise<string> {
-  try {
-    const payload: unknown = await response.json();
-    const root = unwrapPayload(payload);
-    const error = root && isRecord(root.error) ? root.error : isRecord(payload) && isRecord(payload.error) ? payload.error : undefined;
-    const message = error ? readString(error.message) : undefined;
-
-    return message ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
 function formatMessageTime(value: string): string | undefined {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -304,7 +291,7 @@ export function BuildCompanion({
           : "AI Assist could not be loaded. Your project brief and evidence remain available.";
         setState({
           kind: "unavailable",
-          message: await readErrorMessage(response, fallback),
+          message: fallback,
         });
         return;
       }
@@ -324,7 +311,7 @@ export function BuildCompanion({
       setState({
         kind: error instanceof ApiConfigurationError ? "unauthenticated" : "unavailable",
         message: error instanceof ApiConfigurationError
-          ? error.message
+          ? "Sign in to use AI Assist."
           : "AI Assist could not be reached. Your project brief and evidence remain available.",
       });
     }
@@ -405,9 +392,8 @@ export function BuildCompanion({
           : response.status === 503
             ? "AI Assist cannot respond right now. Your question was not assumed to be analysed."
             : "Your message was not sent. Try again when you are ready.";
-        const message = await readErrorMessage(response, fallback);
         updatePendingMessage(pendingMessage.id, { delivery: "failed" });
-        setSendFailure({ message, retryable: response.status !== 401 && response.status !== 403 });
+        setSendFailure({ message: fallback, retryable: response.status !== 401 && response.status !== 403 });
         return;
       }
 
@@ -467,7 +453,7 @@ export function BuildCompanion({
       updatePendingMessage(pendingMessage.id, { delivery: "failed" });
       setSendFailure({
         message: error instanceof ApiConfigurationError
-          ? error.message
+          ? "Sign in to use AI Assist."
           : "We could not confirm that your message was sent. Refresh the conversation before trying again to avoid a duplicate.",
         retryable: false,
       });
