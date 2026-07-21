@@ -8,7 +8,7 @@ The visible product language is **Projects**. Existing API, database, and migrat
 
 ## Live demo
 
-- App: [skillforge-gamma-jade.vercel.app](https://skillforge-gamma-jade.vercel.app)
+- App: [skillforge-myself01.vercel.app](https://skillforge-myself01.vercel.app)
 - API readiness: [skillforge-production-6dfe.up.railway.app/health](https://skillforge-production-6dfe.up.railway.app/health)
 - Source: [github.com/satvik1anand/skillforge](https://github.com/satvik1anand/skillforge)
 

@@ -362,12 +362,15 @@ Publish a reproducible, reviewable SkillForge demo without exposing server crede
 - Updated Supabase Auth Site URL and allowed redirect URLs for the Vercel app while retaining the local callback for development.
 - Regenerated the Railway public domain after an earlier region/domain routing mismatch; no application data, database, or credential was removed.
 - Explicitly bound the API listener to `0.0.0.0` for container-host compatibility and raised the repository/server Node engine requirement to Node 22 because the deployed Supabase runtime requires native WebSocket support.
+- Added an exact additional-origin setting after the standard Vercel production alias returned a CORS `403` while the alternate production alias worked. The allow-list accepts only the two stable aliases; deployment-specific and preview URLs remain rejected.
+- Added the standard Vercel alias callback to the Supabase Auth redirect allow-list so fresh sign-ins work from either stable production address.
 
 **Validation**
 
 - Railway's active deployment logged `server_started` on its injected port and the fresh public `/health` endpoint returned HTTP `200`.
 - A read-only public request from the Vercel origin received the expected CORS allow-origin header from an API route.
 - Vercel production deployment completed successfully; the public landing page and `/signup` page rendered with their expected titles and form controls.
+- A public API request confirmed that both stable Vercel production origins receive their own exact allow-origin header, while an unconfigured deployment-specific origin remains blocked.
 - No server-only key was placed in Vercel or committed to the repository.
 
 **Risks, blockers, and next step**
