@@ -340,6 +340,42 @@ Make the primary demo loop complete without overstating proof or public-sharing 
 - An `OPENROUTER_API_KEY` was then configured. A bounded synthetic provider-chain request returned a live response through `openrouter/free` after the OpenAI fallback, without sending user project, chat, or evidence data. Free-router availability and rate limits remain variable.
 - The portfolio is authenticated and in-product only. Public share links, proof linking, and independent verification are intentionally not claimed in this MVP.
 
+### M5 — Public hackathon deployment
+
+**Date:** 2026-07-22
+
+**Status:** complete for deployment infrastructure; signed-in persistence flow remains a final manual demo check
+
+**Owner(s):** product owner / implementation partner
+
+**Intent**
+
+Publish a reproducible, reviewable SkillForge demo without exposing server credentials or overstating the product's proof and verification capabilities.
+
+**What changed**
+
+- Created the public source repository at `github.com/satvik1anand/skillforge` and pushed the current MVP source.
+- Deployed the Next.js client from `client/` to Vercel at `https://skillforge-gamma-jade.vercel.app`.
+- Deployed the Express API from the repository root to Railway at `https://skillforge-production-6dfe.up.railway.app`.
+- Configured Vercel with browser-safe public API/Supabase configuration only. Supabase server, OpenAI, and OpenRouter keys remain Railway-only.
+- Set Railway's production `FRONTEND_URL` to the stable Vercel origin and rebuilt the client after changing the build-time API URL.
+- Updated Supabase Auth Site URL and allowed redirect URLs for the Vercel app while retaining the local callback for development.
+- Regenerated the Railway public domain after an earlier region/domain routing mismatch; no application data, database, or credential was removed.
+- Explicitly bound the API listener to `0.0.0.0` for container-host compatibility and raised the repository/server Node engine requirement to Node 22 because the deployed Supabase runtime requires native WebSocket support.
+
+**Validation**
+
+- Railway's active deployment logged `server_started` on its injected port and the fresh public `/health` endpoint returned HTTP `200`.
+- A read-only public request from the Vercel origin received the expected CORS allow-origin header from an API route.
+- Vercel production deployment completed successfully; the public landing page and `/signup` page rendered with their expected titles and form controls.
+- No server-only key was placed in Vercel or committed to the repository.
+
+**Risks, blockers, and next step**
+
+- Supabase email confirmation remains temporarily disabled for hackathon testing because the hosted test project's built-in email delivery was not observed. Restore confirmation with configured SMTP before any broader public launch.
+- The direct OpenAI provider remains subject to the previously recorded quota result; the configured fallback remains the practical demo path.
+- Next: run one public signed-in Project creation and AI Assist interaction before recording the walkthrough video; do not represent public sharing, proof linking, or independent verification as shipped.
+
 ### Later milestone — Reliability, evaluation, and demo readiness
 
 **Status:** planned
@@ -366,6 +402,8 @@ Target work: durable AI job handling, rubric and prompt evaluation, privacy/secu
 | 2026-07-21 | M3 manual evidence source | Deployed the controlled taxonomy and manual-evidence migrations, including a focused RPC ambiguity fix. A signed-in browser created, confirmed, revoked, and reloaded one labelled private acceptance record; the visible Brief-derived estimates did not change. | Add editing/capability links and two-account isolation checks before any assessment or sharing work. |
 | 2026-07-21 | Build-aware Assistant policy | Active product documentation now defines automatic private, provenance-backed skill inference from user-authored Build inputs, separate optional deeper prompts, and later proof linking/review. No assistant implementation or model call is claimed. | Implement owner-scoped conversations, bounded context, progression-policy tests, and cost controls before enabling inference. |
 | 2026-07-22 | MVP demo handoff | The root README now gives a one-command local start after environment setup, current migration guidance, an honest 90-second Project → AI Assist → unverified signals → evidence → Skill Portfolio demo path, OpenAI-key prerequisites, and verification commands. It explicitly does not claim public sharing or verification workflows. | Keep the README aligned with the live Supabase/OpenAI configuration and judge-demo validation as those environments change. |
+
+| 2026-07-22 | Public deployment | Vercel production frontend, Railway API, Supabase production Auth URLs, and a public GitHub source repository are configured. Public API health returned `200`; an API request from the Vercel origin passed the exact CORS check; landing and signup pages rendered publicly. | Perform one public signed-in Project/AI Assist demo pass, restore email confirmation before broader public use, and record the walkthrough video. |
 
 ## Reusable log-entry template
 

@@ -6,6 +6,12 @@ SkillForge is an OpenAI Build Week project for people building software products
 
 The visible product language is **Projects**. Existing API, database, and migration names still use `Build`/`Build Brief` while that internal vocabulary is retained for compatibility.
 
+## Live demo
+
+- App: [skillforge-gamma-jade.vercel.app](https://skillforge-gamma-jade.vercel.app)
+- API readiness: [skillforge-production-6dfe.up.railway.app/health](https://skillforge-production-6dfe.up.railway.app/health)
+- Source: [github.com/satvik1anand/skillforge](https://github.com/satvik1anand/skillforge)
+
 ## OpenAI Build Week: Codex and GPT-5.6
 
 - **Codex** was used as the development collaborator: to refine the product and trust model, implement the Next.js/Express/Supabase MVP, debug the local integration, run validation, and keep the Build Week engineering log current.
@@ -25,7 +31,7 @@ Not yet a public-portfolio product: proof linking, source validation, independen
 
 ## Fast local start
 
-**Prerequisites:** Node.js 20+, npm, and a Supabase project for the full signed-in demo.
+**Prerequisites:** Node.js 22+, npm, and a Supabase project for the full signed-in demo.
 
 If local environment files are already configured, one command starts both services:
 
