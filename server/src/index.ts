@@ -27,7 +27,10 @@ function bootstrap(): void {
   }
 
   const app = createApp(config);
-  const server = app.listen(config.port, () => {
+  // Bind explicitly to all IPv4 interfaces for container hosts such as Railway.
+  // Relying on Node's unspecified-host default can bind to IPv6-only in some
+  // runtimes, leaving a healthy process unreachable from the platform proxy.
+  const server = app.listen(config.port, "0.0.0.0", () => {
     console.info(
       JSON.stringify({
         event: "server_started",
